@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+	# emailを小文字に変換する（一意性を保証する為）　
+	before_save { self.email = email.downcase }
 	# 存在性の入力チェック　→　presence
 	# 長さのチェック       →　length
 	# validates (:name, presence: true) とも記述できる
@@ -17,7 +19,9 @@ class User < ActiveRecord::Base
 	# i				大文字小文字を無視するオプション
 
 	VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+[a-z]+\z/i
-	validates :email, presence: true, format: { with: VALID_EMAIL_REGEX }
+	validates :email, presence: true, format: { with: VALID_EMAIL_REGEX },
+				uniqueness: { case_sensitive: false }
 
-	
+	has_secure_password
+	validates :password, length: { minimum: 6 }
 end
